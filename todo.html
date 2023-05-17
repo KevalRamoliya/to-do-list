@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo list</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+
+            <table class="tb-1">
+                <h1>TODO APP</h1>
+                <input type="hidden" id="userid">
+                <tr>
+                    <td>Data:-</td>
+                    <td>
+                        <input type="text" class="tbl" placeholder="Add Task..." id="name">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="button" id="save" onclick="save()" value="Add" />
+                        <input type="button" id="edit" onclick="edit()" value="Edit" />
+                        <input type="button" id="dadata" onclick="dadata()" value="Delete all" />
+                    </td>
+                </tr>
+            </table>
+            <br><br>
+
+            <table class="tb-2">
+                <tr>
+                    <td>No :-</td>
+                    <td>Data :-</td>
+                    <td>Action</td>
+                </tr>
+
+                <tbody id="record"></tbody>
+            </table>
+
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script type="text/javascript">
+
+    let data = [];
+    function save() {
+        let name = document.getElementById('name').value;
+        if (name == '') {
+            alert('Please enter data');
+        }
+        else {
+            let obj = {
+                userid: Math.floor(Math.random() * 10),
+                username: name
+            }
+
+            if (localStorage.getItem('crud') === null || localStorage.getItem('crud') === undefined) {
+                data.push(obj)
+                localStorage.setItem('crud', JSON.stringify(data));
+            }
+            else {
+                let val = JSON.parse(localStorage.getItem('crud'));
+                val.push(obj);
+                localStorage.setItem('crud', JSON.stringify(val));
+            }
+            alert("Your data is successfully insert");
+            document.getElementById('name').value = "";
+            viewdata();
+        }
+
+    }
+
+
+    const viewdata = () => {
+        document.getElementById('edit').style.display = "none";
+        let val = JSON.parse(localStorage.getItem('crud'));
+        let tbl = "";
+
+        for (let i in val) {
+            tbl +=
+                `
+                <tr>
+                    <td>${val[i].userid}</td> 
+                    <td>${val[i].username}</td> 
+                    <td><button onclick='ddata(${val[i].userid})'>Delete</button></td> 
+                    <td><button onclick='eddata(${val[i].userid})'>Edit</button></td> 
+                </tr>    
+            `
+        }
+        document.getElementById('record').innerHTML = tbl;
+    }
+
+    viewdata();
+
+
+    function ddata(user) {
+        let val = JSON.parse(localStorage.getItem('crud'));
+
+        for (let i in val) {
+            if (val[i].userid == user) {
+                val.splice(i, 1);
+            }
+            localStorage.setItem('crud', JSON.stringify(val));
+        }
+        alert("Your data is delete");
+        viewdata();
+    }
+
+
+    function eddata(userid) {
+        document.getElementById('edit').style.display = "block";
+        document.getElementById('save').style.display = "none";
+        let val = JSON.parse(localStorage.getItem('crud'));
+
+        for (let i in val) {
+            if (val[i].userid == userid) {
+                document.getElementById('userid').value = val[i].userid;
+                document.getElementById('name').value = val[i].username;
+            }
+        }
+    }
+
+    function edit() {
+        let id = document.getElementById('userid').value;
+        let name = document.getElementById('name').value;
+
+        let val = JSON.parse(localStorage.getItem('crud'));
+
+        for (let i in val) {
+            if (val[i].userid == id) {
+                val[i].username = name;
+            }
+            localStorage.setItem('crud', JSON.stringify(val));
+        }
+        alert("Data edit");
+        document.getElementById('userid').value = "";
+        document.getElementById('')
+        document.getElementById('save').style.display = "block";
+        document.getElementById('edit').style.display = "none";
+        viewdata();
+    }
+
+    function dadata() {
+        let val = [];
+        localStorage.setItem('crud', JSON.stringify(val));
+
+        viewdata();
+    }
+
+</script>
